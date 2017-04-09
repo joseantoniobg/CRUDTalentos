@@ -1,0 +1,121 @@
+﻿@model CRUDTalentos2.ViewModels.CandidatoQuestionario
+
+<div class="panel panel-default painel">
+    <div class="panel-heading">Formulário de Talentos</div>
+    <div class="panel-body">
+        <form name="talento" asp-controller="Talentos" asp-action="@(Model.candidato.IdCandidato == 0 ? "Create" : "Update")" role="form">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <input type="hidden" asp-for="@Model.candidato.IdCandidato" value="@Model.candidato.IdCandidato" />
+                    <label for="nome">Nome:</label><label class="asterisco">*</label><br />
+                    <input type="text" class="form-control" asp-for="@Model.candidato.Nome" required />
+                </div>
+                <div class="form-group">
+                    <label for="CPF">CPF:</label><br />
+                    <input type="text" class="form-control" asp-for="@Model.candidato.Cpf" onBlur="ValidarCPF(candidato_Cpf);" onKeyPress="MascaraCPF(candidato_Cpf);" maxlength="14" />
+                </div>
+                <div class="form-group">
+                    <label for="Email">E-mail:</label><label class="asterisco">*</label><br />
+                    <input type="email" class="form-control" asp-for="@Model.candidato.Email" required />
+                </div>
+
+                @foreach (var form in Model.questionario)
+                {
+
+                    @if (form.IdCampo == null)
+                    {
+
+                        for (var i = 0; i < Model.perguntas.Count; i++)
+                        {
+                            if (@Model.perguntas[i].IdPergunta == form.IdPergunta)
+                            {
+
+                                <div class="form-group">
+                                    <label for="P @Model.perguntas[i].IdPergunta">@Model.perguntas[i].Pergunta <label class="asterisco">@(Convert.ToBoolean(Model.perguntas[i].Obrigatorio) ? "*" : "")</label></label><br />
+                                    @for (var j = 0; j < Model.respostas.Count; j++)
+                                    {
+
+                                        if (@Model.respostas[j].IdPergunta == @Model.perguntas[i].IdPergunta)
+                                        {
+
+
+                                            for (var k = 0; k < Model.respostasCandidato.Count; k++)
+                                            {
+
+                                                if (Model.respostasCandidato[k].IdReposta == Model.respostas[j].IdResposta)
+                                                {
+                                                    //if (Model.perguntas[i].Exibicao == 0)
+                                                    //{
+                                                        <input type="checkbox" asp-for="@Model.respostasCandidato[k].Checked" class="form-check-input" />
+                                                    //}
+                                                    @*else
+                                                    {
+                                                        if (Model.respostasCandidato[k].Checked)
+                                                        {
+                                                            <input asp-for="@Model.perguntas[i].IdPergunta" type="radio" class="form-check-input" value="@Model.perguntas[i].IdPergunta" checked />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input asp-for="@Model.perguntas[i].IdPergunta" type="radio" class="form-check-input" value="@Model.perguntas[i].IdPergunta" />
+                                                        }
+
+                                                    }*@
+
+                                                    <label asp-for="@Model.respostasCandidato[k].Checked">@Model.respostas[j].Resposta</label>
+                                                    <br />
+                                                    <input type="hidden" asp-for="@Model.respostasCandidato[k].IdReposta" value="@Model.respostas[j].IdResposta" />
+                                                    break;
+                                                }
+                                            }
+                                       }
+                                }
+                                <br />
+                                @*<span class="text-danger" ng-hide="r_@(Model.perguntas[i].IdPergunta).$invalid">Selecione ao menos um item.</span>*@
+                                </div>
+                            }
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        for (var h = 0; h < Model.campos.Count; h++)
+                        {
+                            if (@Model.campos[h].IdCampo == form.IdCampo)
+                            {
+                                <div class="form-group"> 
+                                    <label>@Model.campos[h].Campo <label class="asterisco">@(Convert.ToBoolean(@Model.campos[h].Obrigatorio) ? "*" : "")</label></label><br />
+                                    @for (var l = 0; l < Model.camposCandidato.Count; l++)
+                                    {
+                                        if (Model.camposCandidato[l].IdCampo == Model.campos[h].IdCampo)
+                                        {
+                                            if (Convert.ToBoolean(Model.campos[h].Obrigatorio))
+                                            {
+                                                <input type="text" class="form-control@(Model.campos[h].Classe.Equals("") ? "" : " " + Model.campos[h].Classe)" asp-for="@Model.camposCandidato[l].Resposta" required />
+                                            }
+                                            else
+                                            {
+                                                <input type="text" class="form-control@(Model.campos[h].Classe.Equals("") ? "" : " " + Model.campos[h].Classe)" asp-for="@Model.camposCandidato[l].Resposta" />
+                                            }
+
+                                            <input type="hidden" asp-for="@Model.camposCandidato[l].IdCampo" value="@Model.campos[h].IdCampo" />
+                                            break;
+                                        }
+
+                                    }
+                                   
+                                </div>
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                <button type="submit" ng-disabled="talento.$invalid" class="btn btn-lg btn-primary">Enviar!</button>
+            </div>
+        </form>
+    </div>
+</div>

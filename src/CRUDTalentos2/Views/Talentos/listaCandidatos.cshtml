@@ -1,0 +1,45 @@
+﻿@model IList<CRUDTalentos2.Models.Candidatos>
+
+<div class="container">
+    <h2>Lista de Candidatos</h2>
+    <p>Listando um total de @Model.Count candidatos:</p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.Nome</td>
+                    <td>@c.Email</td>
+                    <td><a class="btn btn-info" asp-controller="Talentos" asp-action="index/@c.IdCandidato">Visualizar</a><a class="btn btn-danger" onclick="bootbox.confirm({
+                                                                                                                                                                                                            message: 'Confirma a exclusão do registro?',
+                                                                                                                                                                                                            buttons: {
+                                                                                                                                                                                                            confirm: {
+                                                                                                                                                                                                                label: 'Sim',
+                                                                                                                                                                                                                className: 'btn-success'
+                                                                                                                                                                                                            },
+                                                                                                                                                                                                            cancel: {
+                                                                                                                                                                                                                label: 'Não',
+                                                                                                                                                                                                                className: 'btn-danger'
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                            },
+                                                                                                                                                                                                            callback: function (result) {
+                                                                                                                                                                                                                if (result) {
+                                                                                                                                                                                                                    location.href='@Url.Action("delete/" + c.IdCandidato, "Talentos")'
+                                                                                                                                                                                                                }else{
+                                                                                                                                                                                                                    location.href='@Url.Action("listaCandidatos", "Talentos")'
+                                                                                                                                                                                                                }
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                            });">Deletar</a></td>
+                </tr>
+         }
+        </tbody>
+    </table>
+</div>
+
